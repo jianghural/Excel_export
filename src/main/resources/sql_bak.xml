@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <file fileName = "template.xlsx">
+        <sheet>
+            <sheetName>t_table_1</sheetName>
+            <sqlValue>
+                select a.ZHANGHAO 客户账号,a.PINGZHZL 凭证种类,m.PNGZMINC 凭证名称,a.QISHIPZH 凭证号,
+                (CASE a.DSPZSYZT WHEN '1' THEN '正式挂失' WHEN '0' THEN '正常' WHEN '2' THEN '作废' WHEN 'm' THEN '使用' END) 凭证状态,
+                a.WEIHGUIY 维护柜员,
+                (CASE a.YZHIZTAI WHEN '0' THEN '未检查' WHEN '5' THEN '跳过处理' ELSE a.YZHIZTAI END) 移植状态,
+                (CASE a.JILUZTAI WHEN '0' THEN '正常' WHEN '1' THEN '删除' ELSE a.JILUZTAI END) 记录状态
+                from KYZB_KEHUPZ a
+                LEFT JOIN KCEP_ZKPZZL m ON a.PINGZHZL = m.PINGZHZL
+                WHERE NOT EXISTS (SELECT 1 FROM KDPY_JBXINX b WHERE a.ZHANGHAO = b.KEHUZHAO ) AND a.WEIHGUIY = 'B999999'
+                /*AND NOT EXISTS (SELECT 1 FROM KDPY_JBXINX c WHERE a.ZHANGHAO = c.ZHANGHAO )*/
+            </sqlValue>
+        </sheet>
+
+        <sheet>
+            <sheetName>t_table_2</sheetName>
+            <sqlValue>
+                WITH tmp AS (
+                select a.MIMAZTAI ,a.SFCHUSMM ,a.YZHIZTAI ,a.* from KYZB_MMDJII a WHERE a.WEIHGUIY = 'B999999' AND a.MIMAZTAI = '1'
+                ),tmpp AS (
+                select DISTINCT a.KEHUZHAO ,a.PINGZHZL ,a.QISHIPZH ,a.MIMAZTAI ,
+                (CASE WHEN b.DSPZSYZT IS NULL THEN e.PZSYZTAI ELSE b.DSPZSYZT END) pz_syzt,
+                c.GSJGBZHI,d.KHZHZTAI ,a.YZHIZTAI ,a.JILUZTAI  from KYZB_MMDJII a
+                LEFT JOIN KYZB_KEHUPZ b ON a.KEHUZHAO = b.ZHANGHAO AND a.PINGZHZL = b.PINGZHZL AND a.QISHIPZH = b.QISHIPZH
+                LEFT JOIN KCDY_PZJCXX e ON a.KEHUZHAO = e.KAHAOOOO AND e.JILUZTAI = '0'
+                LEFT JOIN KYZB_GSDJII c ON a.KEHUZHAO = c.KEHUZHAO AND a.PINGZHZL = c.PINGZHZL AND a.QISHIPZH = c.QISHIPZH AND c.QISHIPZH != '0' AND c.JIAGUARQ IS NULL
+                LEFT JOIN KDPY_JBXINX d ON a.KEHUZHAO = d.KEHUZHAO
+                WHERE a.MIMAZTAI = '1' AND a.WEIHGUIY = 'B999999'
+                )SELECT tt.KEHUZHAO 客户账号,tt.PINGZHZL 凭证种类,tt.QISHIPZH 凭证号 FROM tmpp tt
+                WHERE pz_syzt != '1' OR GSJGBZHI != '1' OR pz_syzt IS NULL OR gsjgbzhi IS NULL
+                ORDER BY tt.kehuzhao
+            </sqlValue>
+        </sheet>
+    </file>
+
+    <file fileName = "template_temp.xlsx">
+        <sheet>
+            <sheetName>t_table_3</sheetName>
+            <sqlValue>
+                SELECT a.zhanghao 账号 FROM KYZB_KEHUPZ a WHERE a.QISHIPZH &lt; '2000' AND rownum &lt; '10'
+            </sqlValue>
+        </sheet>
+    </file>
+
+</root>

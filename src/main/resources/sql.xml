@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <file fileName = "template.xlsx">
+        <sheet>
+            <sheetName>t_table_1</sheetName>
+            <sqlValue>
+                SELECT a.username 姓名,a.password 密码 from t_user a limit 5
+            </sqlValue>
+        </sheet>
+
+        <sheet>
+            <sheetName>t_table_2</sheetName>
+            <sqlValue>
+                SELECT a.username 姓名,a.password 密码 from t_user a limit 1
+            </sqlValue>
+        </sheet>
+    </file>
+
+    <file fileName = "template_template.xlsx">
+        <sheet>
+            <sheetName>t_table_3</sheetName>
+            <sqlValue>
+                SELECT a.username 姓名,a.password 密码 from t_user a
+            </sqlValue>
+        </sheet>
+    </file>
+
+</root>
